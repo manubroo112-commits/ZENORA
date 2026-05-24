@@ -420,3 +420,105 @@ option {
 .ring-cyan-300 {
   --tw-ring-color: #d5b47a !important;
 }
+
+.install-card {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 70;
+  display: grid;
+  width: min(25rem, calc(100vw - 2rem));
+  grid-template-columns: auto 1fr;
+  gap: 0.9rem;
+  border-radius: 1.4rem;
+  padding: 1rem;
+}
+
+.install-card h2 {
+  margin: 0;
+  color: var(--cream);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.install-card p {
+  margin: 0.25rem 0 0;
+  color: rgba(255, 247, 236, 0.54);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.install-icon {
+  display: grid;
+  width: 2.65rem;
+  height: 2.65rem;
+  place-items: center;
+  border-radius: 1rem;
+  background: rgba(244, 234, 220, 0.12);
+  color: #ead09c;
+}
+
+.install-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  display: grid;
+  width: 1.85rem;
+  height: 1.85rem;
+  place-items: center;
+  border-radius: 999px;
+  color: rgba(255, 247, 236, 0.58);
+}
+
+.install-close:hover {
+  background: rgba(244, 234, 220, 0.1);
+  color: var(--cream);
+}
+
+.install-action,
+.ios-install-hint {
+  grid-column: 1 / -1;
+  justify-content: center;
+}
+
+.ios-install-hint {
+  display: inline-flex;
+  min-height: 2.5rem;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 1rem;
+  background: rgba(244, 234, 220, 0.1);
+  color: rgba(255, 247, 236, 0.72);
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+.install-step {
+  display: flex;
+  gap: 0.8rem;
+  border-radius: 1.2rem;
+  border: 1px solid rgba(244, 234, 220, 0.13);
+  background: rgba(244, 234, 220, 0.065);
+  padding: 1rem;
+  color: #ead09c;
+}
+
+.install-step p {
+  margin: 0.25rem 0 0;
+  color: rgba(255, 247, 236, 0.48);
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+@media (min-width: 760px) {
+  .install-card {
+    right: 1.5rem;
+    bottom: 1.5rem;
+  }
+}
+
+@media (max-width: 759px) {
+  .install-card {
+    bottom: 6rem;
+  }
+}

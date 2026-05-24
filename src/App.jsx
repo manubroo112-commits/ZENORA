@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import GlowBackground from "./components/GlowBackground";
+import InstallPrompt from "./components/InstallPrompt";
 import Sidebar from "./components/Sidebar";
 import TopBar from "./components/TopBar";
 import { seedData } from "./data/seed";
@@ -24,7 +25,10 @@ const pageVariants = {
 
 export default function App() {
   const [data, setData] = useLocalStorage("zenora-data-v1", seedData);
-  const [active, setActive] = useState("Dashboard");
+  const [active, setActive] = useState(() => {
+    const section = new URLSearchParams(window.location.search).get("section");
+    return ["Dashboard", "Tasks", "Habits", "Calendar", "Focus", "Notes", "Analytics", "Tools", "Settings"].includes(section) ? section : "Dashboard";
+  });
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(true);
 
@@ -106,6 +110,7 @@ export default function App() {
           </motion.div>
         </AnimatePresence>
       </main>
+      <InstallPrompt />
     </div>
   );
 }

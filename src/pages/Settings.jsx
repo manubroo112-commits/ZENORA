@@ -1,4 +1,4 @@
-import { Bell, Palette, User } from "lucide-react";
+import { Bell, Download, MonitorSmartphone, Palette, Share, User } from "lucide-react";
 import Card from "../components/Card";
 
 const accents = ["#9b6f43", "#d5b47a", "#9aa77e", "#b8795b", "#c6a1a0"];
@@ -32,6 +32,32 @@ export default function Settings({ profile, setData }) {
         <div className="mt-5 flex items-center justify-between rounded-2xl bg-white/[.045] p-4">
           <div><div className="font-medium text-white">Study reminders</div><div className="text-xs text-white/40">Visual toggle only, ready for future notification wiring</div></div>
           <button onClick={() => patch({ notifications: !profile.notifications })} className={`toggle ${profile.notifications ? "justify-end bg-[#d5b47a]" : ""}`}><span /></button>
+        </div>
+      </Card>
+      <Card className="xl:col-span-2">
+        <h2 className="section-title"><MonitorSmartphone size={18} /> Install ZENORA</h2>
+        <div className="mt-5 grid gap-3 md:grid-cols-3">
+          <div className="install-step">
+            <Download size={18} />
+            <div>
+              <div className="font-medium text-white">Desktop</div>
+              <p>Use the browser install button in the address bar or the ZENORA install prompt.</p>
+            </div>
+          </div>
+          <div className="install-step">
+            <Download size={18} />
+            <div>
+              <div className="font-medium text-white">Android</div>
+              <p>Open in Chrome, then tap Install app or Add to Home screen.</p>
+            </div>
+          </div>
+          <div className="install-step">
+            <Share size={18} />
+            <div>
+              <div className="font-medium text-white">iPhone</div>
+              <p>Tap Share in Safari, then choose Add to Home Screen.</p>
+            </div>
+          </div>
         </div>
       </Card>
     </div>
