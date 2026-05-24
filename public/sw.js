@@ -1,4 +1,4 @@
-const CACHE_NAME = "zenora-cache-v1";
+const CACHE_NAME = "zenora-cache-v2";
 const APP_SHELL = ["/", "/index.html", "/manifest.webmanifest", "/icons/icon.svg"];
 
 self.addEventListener("install", (event) => {
@@ -17,6 +17,7 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
+  if (new URL(event.request.url).origin !== self.location.origin) return;
 
   if (event.request.mode === "navigate") {
     event.respondWith(
@@ -38,7 +39,7 @@ self.addEventListener("fetch", (event) => {
       return fetch(event.request)
         .then((response) => {
           const copy = response.clone();
-          if (response.ok && new URL(event.request.url).origin === self.location.origin) {
+          if (response.ok) {
             caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
           }
           return response;

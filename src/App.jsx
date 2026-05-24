@@ -23,11 +23,37 @@ const pageVariants = {
   exit: { opacity: 0, y: -10, filter: "blur(8px)" }
 };
 
+const sections = ["Dashboard", "Tasks", "Habits", "Calendar", "Focus", "Notes", "Analytics", "Tools", "Settings"];
+
+function normalizeData(value) {
+  const source = value && typeof value === "object" ? value : {};
+  return {
+    ...seedData,
+    ...source,
+    profile: { ...seedData.profile, ...(source.profile || {}) },
+    tasks: Array.isArray(source.tasks) ? source.tasks : seedData.tasks,
+    habits: Array.isArray(source.habits) ? source.habits : seedData.habits,
+    notes: Array.isArray(source.notes) ? source.notes : seedData.notes,
+    sessions: Array.isArray(source.sessions) ? source.sessions : seedData.sessions,
+    exams: Array.isArray(source.exams) ? source.exams : seedData.exams,
+    focusStats: { ...seedData.focusStats, ...(source.focusStats || {}) },
+    water: Number.isFinite(source.water) ? source.water : seedData.water
+  };
+}
+
 export default function App() {
-  const [data, setData] = useLocalStorage("zenora-data-v1", seedData);
+  const [storedData, setStoredData] = useLocalStorage("zenora-data-v1", seedData);
+  const data = useMemo(() => normalizeData(storedData), [storedData]);
+  const setData = (updater) => {
+    setStoredData((current) => {
+      const normalized = normalizeData(current);
+      const next = typeof updater === "function" ? updater(normalized) : updater;
+      return normalizeData(next);
+    });
+  };
   const [active, setActive] = useState(() => {
     const section = new URLSearchParams(window.location.search).get("section");
-    return ["Dashboard", "Tasks", "Habits", "Calendar", "Focus", "Notes", "Analytics", "Tools", "Settings"].includes(section) ? section : "Dashboard";
+    return sections.includes(section) ? section : "Dashboard";
   });
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(true);
