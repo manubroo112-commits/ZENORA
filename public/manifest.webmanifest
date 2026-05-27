@@ -1,0 +1,37 @@
+{
+  "name": "ZENORA - Student Productivity OS",
+  "short_name": "ZENORA",
+  "description": "A calm beige productivity operating system for students.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "background_color": "#17100c",
+  "theme_color": "#9b6f43",
+  "orientation": "portrait-primary",
+  "categories": ["productivity", "education", "utilities"],
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Open Tasks",
+      "short_name": "Tasks",
+      "description": "Jump straight into your task board.",
+      "url": "/?section=Tasks",
+      "icons": [{ "src": "/icons/icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Start Focus",
+      "short_name": "Focus",
+      "description": "Start a Pomodoro focus session.",
+      "url": "/?section=Focus",
+      "icons": [{ "src": "/icons/icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+    }
+  ]
+}
