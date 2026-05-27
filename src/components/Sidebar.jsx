@@ -1,15 +1,20 @@
-import { BarChart3, CalendarDays, CheckSquare, Focus, Home, Moon, NotebookPen, Settings, Sparkles, Target, Wrench } from "lucide-react";
+import { BarChart3, Bot, CalendarDays, CheckSquare, Clock3, Crown, Flag, Focus, Home, Moon, NotebookPen, Settings, Sparkles, Target, Wrench, BookOpenCheck } from "lucide-react";
 import { motion } from "framer-motion";
 
 const items = [
   ["Dashboard", Home],
+  ["Today\u2019s Mission", Flag],
   ["Tasks", CheckSquare],
   ["Habits", Target],
+  ["Subjects", BookOpenCheck],
   ["Calendar", CalendarDays],
-  ["Focus", Focus],
+  ["Focus Mode", Focus],
+  ["Exams", Clock3],
+  ["AI Assistant", Bot],
   ["Notes", NotebookPen],
   ["Analytics", BarChart3],
   ["Tools", Wrench],
+  ["Premium", Crown],
   ["Settings", Settings]
 ];
 
@@ -18,7 +23,7 @@ export default function Sidebar({ active, setActive, profile }) {
     <aside className="app-sidebar">
       <div className="glass app-sidebar-inner">
         <div className="app-brand">
-          <div className="grid h-11 w-11 place-items-center rounded-2xl bg-white text-black shadow-violet">
+          <div className="brand-mark">
             <Sparkles size={20} />
           </div>
           <div>
@@ -32,10 +37,10 @@ export default function Sidebar({ active, setActive, profile }) {
             <button
               key={name}
               onClick={() => setActive(name)}
-              className={`nav-item ${active === name ? "text-white" : "text-white/55 hover:text-white"}`}
+              className={`nav-item ${active === name ? "is-active" : ""}`}
               title={name}
             >
-              {active === name && <motion.span layoutId="activeTab" className="absolute inset-0 rounded-2xl bg-white/10" />}
+              {active === name && <motion.span layoutId="activeTab" className="nav-active-pill" />}
               <Icon className="relative z-10 h-5 w-5 shrink-0" />
               <span className="app-nav-label relative z-10">{name}</span>
             </button>

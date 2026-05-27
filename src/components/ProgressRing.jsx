@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 
-export default function ProgressRing({ value = 0, size = 116, label, sublabel, color = "#d5b47a" }) {
+export default function ProgressRing({ value = 0, size = 116, label, sublabel, color = "var(--button-b)" }) {
   const radius = 45;
   const circumference = 2 * Math.PI * radius;
   const dash = circumference - (value / 100) * circumference;

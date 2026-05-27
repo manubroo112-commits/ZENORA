@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import Card from "../components/Card";
 import TaskItem from "../components/TaskItem";
 
-const blank = { title: "", category: "Study", priority: "Medium", due: new Date().toISOString().slice(0, 10) };
+const blank = { title: "", category: "Study", priority: "Medium", due: new Date().toISOString().slice(0, 10), time: "18:00" };
 
 export default function Tasks({ tasks, setData, query }) {
   const [form, setForm] = useState(blank);
@@ -13,7 +13,8 @@ export default function Tasks({ tasks, setData, query }) {
   const editing = Boolean(form.id);
 
   const visible = useMemo(() => tasks.filter((task) => {
-    const matchesFilter = filter === "All" || task.category === filter || (filter === "Active" && !task.completed) || (filter === "Done" && task.completed);
+    const overdue = !task.completed && task.due < new Date().toISOString().slice(0, 10);
+    const matchesFilter = filter === "All" || task.category === filter || (filter === "Active" && !task.completed) || (filter === "Done" && task.completed) || (filter === "Overdue" && overdue);
     const matchesQuery = task.title.toLowerCase().includes(query.toLowerCase());
     return matchesFilter && matchesQuery;
   }), [tasks, filter, query]);
@@ -49,27 +50,45 @@ export default function Tasks({ tasks, setData, query }) {
       <Card>
         <h2 className="section-title"><Plus size={18} /> {editing ? "Edit task" : "Add task"}</h2>
         <form onSubmit={saveTask} className="mt-4 space-y-3">
-          <input className="field" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="What needs your attention?" />
-          <div className="grid grid-cols-2 gap-3">
-            <select className="field" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}>
-              {["Study", "Personal", "Assignment", "Exam"].map((item) => <option key={item}>{item}</option>)}
-            </select>
-            <select className="field" value={form.priority} onChange={(e) => setForm({ ...form, priority: e.target.value })}>
-              {["High", "Medium", "Low"].map((item) => <option key={item}>{item}</option>)}
-            </select>
+          <div className="form-field">
+            <label>Task name</label>
+            <input className="field" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Example: Finish biology notes" />
           </div>
-          <input type="date" className="field" value={form.due} onChange={(e) => setForm({ ...form, due: e.target.value })} />
+          <div className="grid grid-cols-2 gap-3">
+            <div className="form-field">
+              <label>Category</label>
+              <select className="field" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}>
+                {["Study", "Personal", "Health", "Project", "Exam"].map((item) => <option key={item}>{item}</option>)}
+              </select>
+            </div>
+            <div className="form-field">
+              <label>Priority</label>
+              <select className="field" value={form.priority} onChange={(e) => setForm({ ...form, priority: e.target.value })}>
+                {["High", "Medium", "Low"].map((item) => <option key={item}>{item}</option>)}
+              </select>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="form-field">
+              <label>Due date</label>
+              <input type="date" className="field" value={form.due} onChange={(e) => setForm({ ...form, due: e.target.value })} />
+            </div>
+            <div className="form-field">
+              <label>Due time</label>
+              <input type="time" className="field" value={form.time || ""} onChange={(e) => setForm({ ...form, time: e.target.value })} />
+            </div>
+          </div>
           <button className="primary-button w-full justify-center">{editing ? "Save changes" : "Create task"}</button>
         </form>
         <div className="mt-6">
           <div className="mb-2 flex justify-between text-xs text-white/45"><span>Progress</span><span>{completed}/{tasks.length}</span></div>
-          <div className="h-2 rounded-full bg-white/10"><div className="h-full rounded-full bg-gradient-to-r from-[#b8795b] via-[#d5b47a] to-[#9aa77e]" style={{ width: `${(completed / Math.max(1, tasks.length)) * 100}%` }} /></div>
+          <div className="h-2 rounded-full bg-white/10"><div className="theme-gradient h-full rounded-full" style={{ width: `${(completed / Math.max(1, tasks.length)) * 100}%` }} /></div>
         </div>
       </Card>
 
       <Card>
         <div className="mb-4 flex flex-wrap gap-2">
-          {["All", "Active", "Done", "Study", "Assignment", "Exam", "Personal"].map((item) => (
+          {["All", "Active", "Done", "Overdue", "Study", "Project", "Exam", "Personal", "Health"].map((item) => (
             <button key={item} onClick={() => setFilter(item)} className={`pill ${filter === item ? "bg-white text-black" : ""}`}>{item}</button>
           ))}
         </div>

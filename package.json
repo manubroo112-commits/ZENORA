@@ -9,12 +9,20 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@capacitor/android": "^8.3.4",
+    "@capacitor/cli": "^8.3.4",
+    "@capacitor/core": "^8.3.4",
+    "@vercel/analytics": "^2.0.1",
     "@vitejs/plugin-react": "latest",
-    "vite": "latest",
+    "dotenv": "^17.4.2",
+    "firebase": "^12.13.0",
+    "framer-motion": "latest",
+    "groq-sdk": "^1.2.0",
+    "lucide-react": "latest",
     "react": "latest",
     "react-dom": "latest",
-    "framer-motion": "latest",
-    "lucide-react": "latest"
+    "vercel": "^54.4.1",
+    "vite": "latest"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "latest",

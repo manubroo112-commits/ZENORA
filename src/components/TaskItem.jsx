@@ -18,12 +18,13 @@ export default function TaskItem({ task, onToggle, onDelete, onEdit, draggablePr
       {...draggableProps}
     >
       <GripVertical className="hidden h-4 w-4 cursor-grab text-white/25 md:block" />
-      <button onClick={() => onToggle(task.id)} className={`h-5 w-5 rounded-full border transition ${task.completed ? "border-[#d5b47a] bg-[#d5b47a] shadow-[0_0_18px_rgba(213,180,122,.45)]" : "border-white/25"}`} aria-label="Toggle task" />
+      <button onClick={() => onToggle(task.id)} className={`task-toggle h-5 w-5 rounded-full border transition ${task.completed ? "is-complete" : "border-white/25"}`} aria-label="Toggle task" />
       <div className="min-w-0 flex-1">
         <div className={`truncate text-sm font-medium ${task.completed ? "text-white/38 line-through" : "text-white"}`}>{task.title}</div>
         <div className="mt-1 flex flex-wrap items-center gap-2 text-[11px] text-white/42">
           <span>{task.category}</span>
-          <span className="flex items-center gap-1"><Calendar size={12} />{task.due}</span>
+          <span className="flex items-center gap-1"><Calendar size={12} />{task.due}{task.time ? ` at ${task.time}` : ""}</span>
+          {!task.completed && task.due < new Date().toISOString().slice(0, 10) && <span className="text-rose-200">Overdue</span>}
         </div>
       </div>
       <span className={`rounded-full px-2.5 py-1 text-[11px] ${priorityClass[task.priority]}`}>{task.priority}</span>

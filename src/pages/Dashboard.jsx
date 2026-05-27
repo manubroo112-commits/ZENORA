@@ -20,7 +20,9 @@ export default function Dashboard({ data, setActive }) {
             <h2 className="max-w-2xl text-4xl font-semibold tracking-tight text-white md:text-6xl">
               Good evening, {data.profile.name}. Build a calm streak today.
             </h2>
-            <p className="mt-4 max-w-xl text-sm leading-6 text-white/52">Your work is arranged into small, clear loops: plan, focus, finish, recover. ZENORA keeps the surface quiet and the signal high.</p>
+            <p className="mt-4 max-w-xl text-sm leading-6 text-white/52">
+              Your work is arranged into small, clear loops: plan, focus, finish, recover. ZENORA keeps the surface quiet and the signal high.
+            </p>
           </div>
           <ProgressRing value={productivity} size={156} sublabel="daily score" color={data.profile.accent} />
         </div>
@@ -34,7 +36,7 @@ export default function Dashboard({ data, setActive }) {
           </div>
           <Quote className="text-white/35" />
         </div>
-        <button onClick={() => setActive("Focus")} className="primary-button w-full justify-center"><TimerReset size={18} /> Start a focus block</button>
+        <button onClick={() => setActive("Focus Mode")} className="primary-button w-full justify-center"><TimerReset size={18} /> Start a focus block</button>
       </Card>
 
       <div className="grid gap-5 md:grid-cols-3 xl:col-span-2">

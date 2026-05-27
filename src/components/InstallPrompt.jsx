@@ -6,9 +6,16 @@ function isStandalone() {
   return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone;
 }
 
+const SNOOZE_MS = 1000 * 60 * 60 * 24 * 14;
+
+function isSnoozed() {
+  const timestamp = Number(localStorage.getItem("zenora-install-dismissed-at") || 0);
+  return Date.now() - timestamp < SNOOZE_MS;
+}
+
 export default function InstallPrompt() {
   const [promptEvent, setPromptEvent] = useState(null);
-  const [dismissed, setDismissed] = useState(() => localStorage.getItem("zenora-install-dismissed") === "true");
+  const [dismissed, setDismissed] = useState(isSnoozed);
   const [installed, setInstalled] = useState(false);
 
   const isIOS = useMemo(() => /iphone|ipad|ipod/i.test(navigator.userAgent), []);
@@ -18,8 +25,11 @@ export default function InstallPrompt() {
 
     const beforeInstall = (event) => {
       event.preventDefault();
+      if (isSnoozed()) {
+        setDismissed(true);
+        return;
+      }
       setPromptEvent(event);
-      setDismissed(false);
     };
 
     const appInstalled = () => {
@@ -44,7 +54,7 @@ export default function InstallPrompt() {
   };
 
   const close = () => {
-    localStorage.setItem("zenora-install-dismissed", "true");
+    localStorage.setItem("zenora-install-dismissed-at", String(Date.now()));
     setDismissed(true);
   };
 

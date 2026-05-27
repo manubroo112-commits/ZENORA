@@ -1,13 +1,13 @@
 {
   "name": "ZENORA - Student Productivity OS",
   "short_name": "ZENORA",
-  "description": "A calm beige productivity operating system for students.",
+  "description": "A calm student productivity OS for study planning, focus sessions, subject tracking, exam prep, notes, analytics, and AI study help.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
-  "background_color": "#17100c",
-  "theme_color": "#9b6f43",
+  "background_color": "#171615",
+  "theme_color": "#ecc5c6",
   "orientation": "portrait-primary",
   "categories": ["productivity", "education", "utilities"],
   "icons": [

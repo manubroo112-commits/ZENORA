@@ -3,19 +3,135 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#9b6f43" />
-    <meta name="description" content="ZENORA is a calm productivity operating system for students." />
+    <meta name="theme-color" content="#ecc5c6" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta
+      name="description"
+      content="ZENORA is a student productivity OS for study planning, focus sessions, tasks, habits, subject tracking, exam countdowns, notes, analytics, and AI study help."
+    />
+    <meta
+      name="keywords"
+      content="ZENORA, Zenora, student productivity OS, study planner, AI study assistant, focus timer, exam planner, subject tracker, student dashboard"
+    />
+    <meta name="application-name" content="ZENORA" />
+    <meta name="apple-mobile-web-app-title" content="ZENORA" />
+    <meta name="author" content="ZENORA" />
+    <link rel="canonical" href="https://zenora-liard.vercel.app/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="ZENORA" />
+    <meta property="og:title" content="ZENORA | Student Productivity OS" />
+    <meta
+      property="og:description"
+      content="Plan studies, track progress, run focus blocks, manage subjects, prepare for exams, and get AI study help inside one calm student workspace."
+    />
+    <meta property="og:url" content="https://zenora-liard.vercel.app/" />
+    <meta property="og:image" content="https://zenora-liard.vercel.app/icons/icon.svg" />
+    <meta property="og:image:alt" content="ZENORA student productivity OS icon" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="ZENORA | Student Productivity OS" />
+    <meta
+      name="twitter:description"
+      content="A calm student OS for study planning, focus, subjects, exams, notes, analytics, and AI study assistance."
+    />
+    <meta name="twitter:image" content="https://zenora-liard.vercel.app/icons/icon.svg" />
+
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-title" content="ZENORA" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="icon" href="/icons/icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/icons/icon.svg" />
-    <link rel="mask-icon" href="/icons/safari-pinned-tab.svg" color="#9b6f43" />
+    <link rel="mask-icon" href="/icons/safari-pinned-tab.svg" color="#ecc5c6" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://zenora-liard.vercel.app/#organization",
+            "name": "ZENORA",
+            "url": "https://zenora-liard.vercel.app/",
+            "logo": "https://zenora-liard.vercel.app/icons/icon.svg",
+            "sameAs": []
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://zenora-liard.vercel.app/#website",
+            "url": "https://zenora-liard.vercel.app/",
+            "name": "ZENORA",
+            "alternateName": ["Zenora", "ZENORA Student OS", "ZENORA Student Productivity OS"],
+            "description": "ZENORA is a student productivity OS for study planning, focus sessions, tasks, habits, subject tracking, exam countdowns, notes, analytics, and AI study help.",
+            "publisher": {
+              "@id": "https://zenora-liard.vercel.app/#organization"
+            },
+            "inLanguage": "en"
+          },
+          {
+            "@type": "SoftwareApplication",
+            "@id": "https://zenora-liard.vercel.app/#app",
+            "name": "ZENORA",
+            "alternateName": "ZENORA Student OS",
+            "applicationCategory": "EducationalApplication",
+            "operatingSystem": "Web, Android",
+            "url": "https://zenora-liard.vercel.app/",
+            "description": "A calm student productivity workspace with study planning, tasks, habits, focus timer, subjects, exams, notes, analytics, and AI study assistant tools.",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "publisher": {
+              "@id": "https://zenora-liard.vercel.app/#organization"
+            }
+          },
+          {
+            "@type": "FAQPage",
+            "@id": "https://zenora-liard.vercel.app/#faq",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "What is ZENORA?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "ZENORA is a student productivity OS for study planning, focus sessions, tasks, habits, subject tracking, exam preparation, notes, analytics, and AI study help."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Who is ZENORA for?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "ZENORA is built for students who want a calm workspace for school, college, competitive exams, self-study, revision planning, and focused study sessions."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "What can students do with ZENORA?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Students can plan study work, track tasks and habits, manage subjects and weak topics, set exam countdowns, save notes, review analytics, run focus timers, and use an AI study assistant."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    </script>
     <title>ZENORA | Student Productivity OS</title>
   </head>
   <body>
+    <noscript>
+      <main>
+        <h1>ZENORA Student Productivity OS</h1>
+        <p>
+          ZENORA helps students plan studies, track tasks and habits, manage subjects, prepare for exams,
+          take notes, review analytics, and run focused study sessions.
+        </p>
+      </main>
+    </noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
