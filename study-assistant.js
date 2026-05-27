@@ -2,7 +2,7 @@ import Groq from "groq-sdk";
 
 const demoResponse = ({ message, examType, weakTopics = [], subjects = [], availableStudyHours = 0 }) => {
   const text = String(message || "").toLowerCase();
-  const subject = subjects[0] || "your main subject";
+  const subject = subjects[0] || "your main subject"; 
   const weakTopic = weakTopics[0] || "your weakest topic";
 
   let reply = [
