@@ -1,7 +1,9 @@
 import { Activity, BarChart3, Brain, CheckCircle2, Flame, GraduationCap, TimerReset } from "lucide-react";
 import Card from "../components/Card";
+import ProLock from "../components/ProLock";
 
-export default function Analytics({ data }) {
+export default function Analytics({ data, setActive }) {
+  const isPro = data.profile.plan === "pro" || data.profile.proOverride;
   const sessions = data.sessions;
   const totalStudyHours = sessions.reduce((sum, item) => sum + Number(item.hours || 0), 0);
   const maxHours = Math.max(...sessions.map((item) => Number(item.hours || 0)), 1);
@@ -17,6 +19,7 @@ export default function Analytics({ data }) {
 
   return (
     <div className="grid gap-5 xl:grid-cols-[1.1fr_.9fr]">
+      {isPro ? (
       <Card className="analytics-chart-card">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
@@ -52,8 +55,23 @@ export default function Analytics({ data }) {
           </div>
         )}
       </Card>
+      ) : (
+        <ProLock title="Pro weekly and monthly graphs" onUpgrade={() => setActive?.("Premium")}>
+          <Card className="analytics-chart-card">
+            <h2 className="section-title"><BarChart3 size={18} /> Weekly productivity</h2>
+            <div className="analytics-empty mt-8">
+              <BarChart3 size={28} />
+              <div>
+                <h3>Advanced graphs are Pro</h3>
+                <p>Free analytics keeps the summary cards below. Pro unlocks weekly/monthly graphs and deeper patterns.</p>
+              </div>
+            </div>
+          </Card>
+        </ProLock>
+      )}
 
       <div className="grid gap-5">
+        {isPro ? (
         <Card>
           <h3 className="section-title"><Activity size={18} /> Habit consistency</h3>
           {hasStudyData ? (
@@ -69,6 +87,14 @@ export default function Analytics({ data }) {
             <div className="empty-state mt-4">Check off habits for a few days to see consistency here.</div>
           )}
         </Card>
+        ) : (
+          <ProLock title="Pro habit consistency" compact onUpgrade={() => setActive?.("Premium")}>
+            <Card>
+              <h3 className="section-title"><Activity size={18} /> Habit consistency</h3>
+              <div className="empty-state mt-4">Consistency trends unlock with Pro analytics.</div>
+            </Card>
+          </ProLock>
+        )}
         <Card>
           <h3 className="section-title"><Brain size={18} /> Study insight</h3>
           <p className="mt-4 text-sm leading-6 text-white/52">
@@ -86,7 +112,7 @@ export default function Analytics({ data }) {
         <Card><p className="text-sm text-white/45">Pending</p><div className="mt-2 text-4xl font-semibold text-white">{pending}</div></Card>
       </div>
 
-      {data.subjects.length > 0 && (
+      {isPro && data.subjects.length > 0 && (
         <Card className="xl:col-span-2">
           <h3 className="section-title"><GraduationCap size={18} /> Subject-wise progress</h3>
           <div className="mt-5 grid gap-3 md:grid-cols-3">
@@ -103,12 +129,29 @@ export default function Analytics({ data }) {
           </div>
         </Card>
       )}
+      {!isPro && (
+        <ProLock title="Pro subject-wise progress" onUpgrade={() => setActive?.("Premium")}>
+          <Card className="xl:col-span-2">
+            <h3 className="section-title"><GraduationCap size={18} /> Subject-wise progress</h3>
+            <div className="empty-state mt-5">Advanced subject analytics unlock with Pro. Free users can still track limited subjects in the Subjects page.</div>
+          </Card>
+        </ProLock>
+      )}
 
+      {isPro ? (
       <Card>
         <h3 className="section-title"><Flame size={18} /> Study streak</h3>
         <div className="mt-4 text-5xl font-semibold text-white">{data.gamification.streak}</div>
         <p className="mt-2 text-sm text-white/45">days of visible progress</p>
       </Card>
+      ) : (
+        <ProLock title="Pro streak analytics" compact onUpgrade={() => setActive?.("Premium")}>
+          <Card>
+            <h3 className="section-title"><Flame size={18} /> Study streak</h3>
+            <div className="mt-4 text-5xl font-semibold text-white">--</div>
+          </Card>
+        </ProLock>
+      )}
       <Card>
         <h3 className="section-title"><Brain size={18} /> Productivity score</h3>
         <div className="mt-4 text-5xl font-semibold text-white">{productivity}</div>

@@ -14,10 +14,13 @@ const urgency = (days) => {
 export default function Exams({ data, setData }) {
   const [form, setForm] = useState(blank);
   const editing = Boolean(form.id);
+  const isPro = data.profile.plan === "pro" || data.profile.proOverride;
+  const examLimitReached = !isPro && !editing && data.exams.length >= 3;
 
   const saveExam = (event) => {
     event.preventDefault();
     if (!form.name.trim()) return;
+    if (examLimitReached) return;
     const payload = { ...form, syllabusProgress: Number(form.syllabusProgress) || 0 };
     setData((current) => ({
       ...current,
@@ -34,7 +37,10 @@ export default function Exams({ data, setData }) {
     <div className="grid gap-5 xl:grid-cols-[.8fr_1.2fr]">
       <Card>
         <h2 className="section-title"><CalendarClock size={18} /> {editing ? "Edit exam" : "Add exam countdown"}</h2>
-        <p className="mt-2 text-sm leading-6 text-white/48">Track exams, practice tests, project deadlines, certifications, and important academic dates in one calm place.</p>
+        <p className="mt-2 text-sm leading-6 text-white/48">
+          Track exams, practice tests, project deadlines, certifications, and important academic dates in one calm place.
+          {!isPro && " Free plan includes 3 countdowns."}
+        </p>
         <form onSubmit={saveExam} className="mt-5 space-y-3">
           <div className="form-field">
             <label>Exam name</label>
@@ -57,7 +63,8 @@ export default function Exams({ data, setData }) {
             <input className="field" type="range" min="0" max="100" value={form.syllabusProgress} onChange={(event) => setForm({ ...form, syllabusProgress: Number(event.target.value) })} />
             <p className="field-help">This helps the dashboard show urgency clearly.</p>
           </div>
-          <button className="primary-button w-full justify-center"><Plus size={18} /> {editing ? "Save exam" : "Add exam"}</button>
+          {examLimitReached && <div className="empty-state">Free countdown limit reached. Upgrade to Pro for unlimited exams and deadlines.</div>}
+          <button disabled={examLimitReached} className="primary-button w-full justify-center"><Plus size={18} /> {editing ? "Save exam" : "Add exam"}</button>
         </form>
       </Card>
 
@@ -74,8 +81,8 @@ export default function Exams({ data, setData }) {
                   <p className="mt-1 text-sm text-white/45">{exam.date}</p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <button className="pill" onClick={() => setForm(exam)}>Edit</button>
-                  <button className="icon-button" onClick={() => removeExam(exam.id)} title="Delete exam"><Trash2 size={16} /></button>
+                  <button className="pill" onClick={() => setForm(exam)} aria-label={`Edit exam: ${exam.name}`}>Edit</button>
+                  <button className="icon-button" onClick={() => removeExam(exam.id)} title="Delete exam" aria-label={`Delete exam: ${exam.name}`}><Trash2 size={16} /></button>
                 </div>
               </div>
               <div className="mt-5 grid gap-3 sm:grid-cols-[auto_1fr] sm:items-center">

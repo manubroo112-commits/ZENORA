@@ -224,7 +224,7 @@ export default function Tools({ data, setData }) {
         <h2 className="section-title"><Droplets size={18} /> Water intake</h2>
         <div className="mt-5 flex flex-wrap gap-2">
           {Array.from({ length: 8 }).map((_, index) => (
-            <button key={index} onClick={() => setData((current) => ({ ...current, water: index + 1 }))} className={`water-button grid h-12 w-12 place-items-center rounded-2xl border ${index < data.water ? "is-filled" : ""}`}>
+            <button key={index} onClick={() => setData((current) => ({ ...current, water: index + 1 }))} className={`water-button grid h-12 w-12 place-items-center rounded-2xl border ${index < data.water ? "is-filled" : ""}`} aria-label={`Set water intake to ${index + 1} glass${index === 0 ? "" : "es"}`} aria-pressed={index < data.water}>
               <Droplets size={17} />
             </button>
           ))}

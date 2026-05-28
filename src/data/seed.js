@@ -5,9 +5,9 @@ export const seedData = {
     examGoal: "",
     examType: "General",
     availableStudyHours: 0,
-    theme: "sakura",
-    accent: "#ecc5c6",
-    dark: true,
+    theme: "sage",
+    accent: "#7FA88E",
+    dark: false,
     notifications: true,
     plan: "free",
     role: "Student",
@@ -52,5 +52,5 @@ export const seedData = {
     history: []
   },
   focusStats: { sessions: 0, minutes: 0 },
-  preferences: { compactMode: false, sound: true, weeklyDigest: true, defaultsCleared: true, globalBlankDefaultsV2: false }
+  preferences: { compactMode: false, sound: true, weeklyDigest: true, defaultsCleared: true, globalBlankDefaultsV2: false, staticLightThemeV1: true, sageThemeBoxV1: true }
 };

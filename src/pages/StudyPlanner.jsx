@@ -1,6 +1,7 @@
 import { BookOpenCheck, CalendarClock, Plus, Target, Trash2 } from "lucide-react";
 import { useState } from "react";
 import Card from "../components/Card";
+import ProLock from "../components/ProLock";
 import { daysUntil } from "../utils/date";
 
 const blank = { name: "", chapters: 10, completed: 0, targetHours: 5, studiedHours: 0, examDate: new Date().toISOString().slice(0, 10), revisionStatus: "Not started", weakTopicsText: "" };
@@ -11,11 +12,14 @@ export default function StudyPlanner({ data, setData }) {
   const [subject, setSubject] = useState(blank);
   const [assignment, setAssignment] = useState(blankAssignment);
   const [goal, setGoal] = useState(blankGoal);
+  const isPro = data.profile.plan === "pro" || data.profile.proOverride;
+  const subjectLimitReached = !isPro && data.subjects.length >= 3;
   const totalProgress = Math.round(data.subjects.reduce((sum, item) => sum + item.completed / Math.max(1, item.chapters), 0) / Math.max(1, data.subjects.length) * 100);
 
   const addSubject = (event) => {
     event.preventDefault();
     if (!subject.name.trim()) return;
+    if (subjectLimitReached) return;
     const { weakTopicsText, ...payload } = subject;
     setData((current) => ({
       ...current,
@@ -68,7 +72,10 @@ export default function StudyPlanner({ data, setData }) {
     <div className="study-planner-grid grid gap-5 xl:grid-cols-2">
       <Card className="subject-entry-card">
         <h2 className="section-title"><BookOpenCheck size={18} /> Subject command center</h2>
-        <p className="mt-2 text-sm leading-6 text-white/48">Track syllabus progress, pending chapters, revision status, weak topics, and exam date for every subject.</p>
+        <p className="mt-2 text-sm leading-6 text-white/48">
+          Track syllabus progress, pending chapters, revision status, weak topics, and exam date for every subject.
+          {!isPro && " Free plan includes 3 subjects."}
+        </p>
         <div className="mt-5 rounded-3xl bg-white/[.045] p-5">
           <div className="text-5xl font-semibold text-white">{totalProgress}%</div>
           <p className="mt-2 text-sm text-white/45">overall exam preparation</p>
@@ -110,7 +117,8 @@ export default function StudyPlanner({ data, setData }) {
             <input className="field" value={subject.weakTopicsText} onChange={(event) => setSubject({ ...subject, weakTopicsText: event.target.value })} placeholder="Example: Optics, Organic mechanisms, Polity Laxmikanth" />
             <p className="field-help">Separate topics with commas. These are also sent as context to the AI assistant.</p>
           </div>
-          <button className="primary-button w-full justify-center"><Plus size={18} /> Add subject</button>
+          {subjectLimitReached && <div className="empty-state">Free subject limit reached. Upgrade to Pro for unlimited subjects and deeper planning tools.</div>}
+          <button disabled={subjectLimitReached} className="primary-button w-full justify-center"><Plus size={18} /> Add subject</button>
         </form>
       </Card>
 
@@ -133,7 +141,7 @@ export default function StudyPlanner({ data, setData }) {
                   >
                     Log revision
                   </button>
-                  <button className="icon-button" onClick={() => setData((current) => ({ ...current, subjects: current.subjects.filter((subject) => subject.id !== item.id) }))} title="Delete subject"><Trash2 size={15} /></button>
+                  <button className="icon-button" onClick={() => setData((current) => ({ ...current, subjects: current.subjects.filter((subject) => subject.id !== item.id) }))} title="Delete subject" aria-label={`Delete subject: ${item.name}`}><Trash2 size={15} /></button>
                 </div>
               </div>
               <div className="mt-4 grid gap-3 md:grid-cols-2">
@@ -160,6 +168,7 @@ export default function StudyPlanner({ data, setData }) {
       </div>
       )}
 
+      {isPro ? (
       <Card className="revision-planner-card">
         <h3 className="section-title"><CalendarClock size={18} /> Revision planner</h3>
         <p className="mt-2 text-sm leading-6 text-white/48">Use this for assignments, revision tasks, chapter practice, or anything with a due date and progress.</p>
@@ -187,7 +196,7 @@ export default function StudyPlanner({ data, setData }) {
             <div key={assignment.id} className="rounded-2xl bg-white/[.045] p-4">
               <div className="flex justify-between gap-3 text-sm font-semibold text-white">
                 <input className="min-w-0 flex-1 bg-transparent outline-none" value={assignment.title} onChange={(event) => updateAssignment(assignment.id, { title: event.target.value })} />
-                <button className="icon-button" onClick={() => setData((current) => ({ ...current, assignments: current.assignments.filter((item) => item.id !== assignment.id) }))} title="Delete assignment"><Trash2 size={15} /></button>
+                <button className="icon-button" onClick={() => setData((current) => ({ ...current, assignments: current.assignments.filter((item) => item.id !== assignment.id) }))} title="Delete assignment" aria-label={`Delete assignment: ${assignment.title || "Untitled assignment"}`}><Trash2 size={15} /></button>
               </div>
               <p className="mt-1 text-xs text-white/42">{assignment.subject} - due in {daysUntil(assignment.due)} days</p>
               <div className="mt-3 flex items-center gap-3">
@@ -199,7 +208,16 @@ export default function StudyPlanner({ data, setData }) {
           {!data.assignments.length && <div className="empty-state">No revision tasks yet. Add one above.</div>}
         </div>
       </Card>
+      ) : (
+        <ProLock title="Pro revision planner">
+          <Card className="revision-planner-card">
+            <h3 className="section-title"><CalendarClock size={18} /> Revision planner</h3>
+            <p className="mt-2 text-sm leading-6 text-white/48">Plan assignment deadlines, revision tasks, chapter practice, and progress tracking with Pro.</p>
+          </Card>
+        </ProLock>
+      )}
 
+      {isPro ? (
       <Card className="goal-tracker-card">
         <h3 className="section-title"><Target size={18} /> Goal tracker</h3>
         <p className="mt-2 text-sm leading-6 text-white/48">Create longer-term academic goals and move the progress slider as you complete work.</p>
@@ -219,7 +237,7 @@ export default function StudyPlanner({ data, setData }) {
             <div key={goal.id} className="rounded-2xl bg-white/[.045] p-4">
               <div className="mb-3 flex items-center justify-between gap-3 text-sm text-white">
                 <input className="min-w-0 flex-1 bg-transparent outline-none" value={goal.title} onChange={(event) => updateGoal(goal.id, { title: event.target.value })} />
-                <button className="icon-button" onClick={() => setData((current) => ({ ...current, goals: current.goals.filter((item) => item.id !== goal.id) }))} title="Delete goal"><Trash2 size={15} /></button>
+                <button className="icon-button" onClick={() => setData((current) => ({ ...current, goals: current.goals.filter((item) => item.id !== goal.id) }))} title="Delete goal" aria-label={`Delete goal: ${goal.title || "Untitled goal"}`}><Trash2 size={15} /></button>
               </div>
               <div className="h-2 rounded-full bg-white/10"><div className="theme-fill-a h-full rounded-full" style={{ width: `${goal.progress}%` }} /></div>
               <div className="mt-3 flex items-center gap-3">
@@ -231,6 +249,14 @@ export default function StudyPlanner({ data, setData }) {
           {!data.goals.length && <div className="empty-state">No goals yet. Add one above.</div>}
         </div>
       </Card>
+      ) : (
+        <ProLock title="Pro goal tracker">
+          <Card className="goal-tracker-card">
+            <h3 className="section-title"><Target size={18} /> Goal tracker</h3>
+            <p className="mt-2 text-sm leading-6 text-white/48">Track long-term academic goals, progress sliders, and serious study milestones with Pro.</p>
+          </Card>
+        </ProLock>
+      )}
     </div>
   );
 }

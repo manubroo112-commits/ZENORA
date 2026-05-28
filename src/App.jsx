@@ -27,9 +27,9 @@ import TodayMission from "./pages/TodayMission";
 import Tools from "./pages/Tools";
 
 const pageVariants = {
-  initial: { opacity: 0, y: 16, filter: "blur(8px)" },
-  animate: { opacity: 1, y: 0, filter: "blur(0px)" },
-  exit: { opacity: 0, y: -10, filter: "blur(8px)" }
+  initial: { opacity: 0, filter: "blur(8px)" },
+  animate: { opacity: 1, filter: "blur(0px)" },
+  exit: { opacity: 0, filter: "blur(8px)" }
 };
 
 const sections = [
@@ -44,7 +44,6 @@ const sections = [
   "AI Assistant",
   "Notes",
   "Analytics",
-  "Tools",
   "Premium",
   "Settings"
 ];
@@ -209,6 +208,56 @@ export default function App() {
   }, [data.preferences.globalBlankDefaultsV2, setData]);
 
   useEffect(() => {
+    if (data.preferences.staticLightThemeV1) return;
+    setData((current) => ({
+      ...current,
+      profile: {
+        ...current.profile,
+        dark: false,
+        theme: "sage",
+        accent: "#7FA88E"
+      },
+      preferences: {
+        ...current.preferences,
+        staticLightThemeV1: true
+      }
+    }));
+  }, [data.preferences.staticLightThemeV1, setData]);
+
+  useEffect(() => {
+    if (data.preferences.sageThemeBoxV1) return;
+    setData((current) => ({
+      ...current,
+      profile: {
+        ...current.profile,
+        dark: false,
+        theme: "sage",
+        accent: "#7FA88E"
+      },
+      preferences: {
+        ...current.preferences,
+        sageThemeBoxV1: true
+      }
+    }));
+  }, [data.preferences.sageThemeBoxV1, setData]);
+
+  useEffect(() => {
+    const shouldUseSage = !proTester && (data.profile.theme !== "sage" || data.profile.dark);
+    const shouldReplaceOcean = data.profile.theme === "ocean";
+    if (!shouldUseSage && !shouldReplaceOcean) return;
+
+    setData((current) => ({
+      ...current,
+      profile: {
+        ...current.profile,
+        dark: false,
+        theme: "sage",
+        accent: "#7FA88E"
+      }
+    }));
+  }, [data.profile.dark, data.profile.theme, proTester, setData]);
+
+  useEffect(() => {
     const oldAccents = new Set(["#7c5cff", "#22d3ee", "#f472b6", "#34d399", "#f59e0b"]);
     const oldHabitColors = new Set(["#60a5fa", "#a78bfa", "#22d3ee", "#7dd3fc"]);
     if (!oldAccents.has(data.profile.accent) && !data.habits.some((habit) => oldHabitColors.has(habit.color))) return;
@@ -233,7 +282,7 @@ export default function App() {
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", effectiveData.profile.dark);
-    document.documentElement.dataset.theme = effectiveData.profile.theme || "sakura";
+    document.documentElement.dataset.theme = effectiveData.profile.theme || "sage";
     document.documentElement.style.setProperty("--accent", effectiveData.profile.accent);
   }, [effectiveData.profile.dark, effectiveData.profile.theme, effectiveData.profile.accent]);
 
@@ -255,15 +304,15 @@ export default function App() {
       Dashboard: <Dashboard {...props} setActive={setActive} />,
       "Today\u2019s Mission": <TodayMission data={effectiveData} setData={setData} setActive={setActive} />,
       Tasks: <Tasks tasks={effectiveData.tasks} setData={setData} query={query} />,
-      Habits: <Habits habits={effectiveData.habits} setData={setData} />,
+      Habits: proTester ? <Habits habits={effectiveData.habits} setData={setData} /> : <Pricing setActive={setActive} profile={effectiveData.profile} user={cloud.user} />,
       Calendar: <Calendar tasks={effectiveData.tasks} setData={setData} data={effectiveData} />,
       "Focus Mode": <Focus data={effectiveData} setData={setData} setActive={setActive} />,
-      Notes: <Notes notes={effectiveData.notes} setData={setData} query={query} />,
+      Notes: <Notes data={effectiveData} notes={effectiveData.notes} setData={setData} query={query} />,
       Subjects: <StudyPlanner data={effectiveData} setData={setData} />,
       Exams: <Exams data={effectiveData} setData={setData} />,
       "AI Assistant": <Assistant data={effectiveData} setData={setData} setActive={setActive} />,
-      Analytics: <Analytics data={effectiveData} />,
-      Tools: <Tools data={effectiveData} setData={setData} />,
+      Analytics: <Analytics data={effectiveData} setActive={setActive} />,
+      Tools: proTester ? <Tools data={effectiveData} setData={setData} /> : <Pricing setActive={setActive} profile={effectiveData.profile} user={cloud.user} />,
       Premium: <Pricing setActive={setActive} profile={effectiveData.profile} user={cloud.user} />,
       Settings: <Settings data={effectiveData} profile={effectiveData.profile} preferences={effectiveData.preferences} setData={setData} cloud={cloud} />
     }[active];
@@ -294,7 +343,7 @@ export default function App() {
       ) : (
         <>
           <Sidebar active={active} setActive={setActive} profile={effectiveData.profile} />
-          <main className="app-main">
+          <main id="main-content" className="app-main" aria-label={`${active} content`}>
             <TopBar active={active} query={query} setQuery={setQuery} />
             <AnimatePresence mode="wait">
               <motion.div key={active} variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={{ duration: 0.32 }}>
@@ -302,7 +351,7 @@ export default function App() {
               </motion.div>
             </AnimatePresence>
           </main>
-          <FloatingCapture setData={setData} setActive={setActive} />
+          <FloatingCapture setData={setData} setActive={setActive} isPro={proTester} />
           <InstallPrompt />
         </>
       )}

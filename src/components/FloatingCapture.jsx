@@ -1,11 +1,29 @@
 import { BookOpenCheck, CalendarClock, CheckSquare, Flame, NotebookPen, Plus, TimerReset, X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const todayIso = () => new Date().toISOString().slice(0, 10);
 
-export default function FloatingCapture({ setData, setActive }) {
+export default function FloatingCapture({ setData, setActive, isPro = false }) {
   const [open, setOpen] = useState(false);
+  const menuRef = useRef(null);
+  const triggerRef = useRef(null);
+
+  const closeMenu = () => {
+    setOpen(false);
+    setTimeout(() => triggerRef.current?.focus(), 0);
+  };
+
+  useEffect(() => {
+    if (!open) return undefined;
+    const firstButton = menuRef.current?.querySelector("button");
+    firstButton?.focus();
+    const onKeyDown = (event) => {
+      if (event.key === "Escape") closeMenu();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [open]);
 
   const capture = (type) => {
     const today = todayIso();
@@ -27,7 +45,9 @@ export default function FloatingCapture({ setData, setActive }) {
     if (type === "exam") {
       setData((data) => ({
         ...data,
-        exams: [{ id: crypto.randomUUID(), name: "New exam", date: today, type: data.profile.examType || "Exam", syllabusProgress: 0 }, ...data.exams]
+        exams: !isPro && data.exams.length >= 3
+          ? data.exams
+          : [{ id: crypto.randomUUID(), name: "New exam", date: today, type: data.profile.examType || "Exam", syllabusProgress: 0 }, ...data.exams]
       }));
       setActive("Exams");
     }
@@ -49,28 +69,42 @@ export default function FloatingCapture({ setData, setActive }) {
     if (type === "subject") {
       setData((data) => ({
         ...data,
-        subjects: [{ id: crypto.randomUUID(), name: "New subject", chapters: 10, completed: 0, targetHours: 20, studiedHours: 0, examDate: today, revisionStatus: "Not started", weakTopics: [] }, ...data.subjects]
+        subjects: !isPro && data.subjects.length >= 3
+          ? data.subjects
+          : [{ id: crypto.randomUUID(), name: "New subject", chapters: 10, completed: 0, targetHours: 20, studiedHours: 0, examDate: today, revisionStatus: "Not started", weakTopics: [] }, ...data.subjects]
       }));
       setActive("Subjects");
     }
   };
 
-  const actions = [
+  const freeActions = [
     ["task", "Task", CheckSquare],
     ["note", "Note", NotebookPen],
     ["exam", "Exam", CalendarClock],
-    ["habit", "Habit", Flame],
-    ["session", "Study session", TimerReset],
     ["subject", "Subject", BookOpenCheck]
   ];
+  const proActions = [
+    ["habit", "Habit", Flame],
+    ["session", "Study session", TimerReset]
+  ];
+  const actions = isPro ? [...freeActions, ...proActions] : freeActions;
 
   return (
     <div className="quick-capture">
       <AnimatePresence>
         {open && (
-          <motion.div initial={{ opacity: 0, y: 12, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 8, scale: 0.98 }} className="glass quick-capture-menu">
+          <motion.div
+            ref={menuRef}
+            id="zenora-quick-capture-menu"
+            role="menu"
+            aria-label="Quick capture actions"
+            initial={{ opacity: 0, y: 12, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 8, scale: 0.98 }}
+            className="glass quick-capture-menu"
+          >
             {actions.map(([type, label, Icon]) => (
-              <button key={type} onClick={() => capture(type)}>
+              <button key={type} role="menuitem" onClick={() => capture(type)} aria-label={`Add ${label.toLowerCase()}`}>
                 <Icon size={17} />
                 <span>{label}</span>
               </button>
@@ -78,7 +112,15 @@ export default function FloatingCapture({ setData, setActive }) {
           </motion.div>
         )}
       </AnimatePresence>
-      <button className="quick-capture-button" onClick={() => setOpen((value) => !value)} aria-label="Quick capture">
+      <button
+        ref={triggerRef}
+        className="quick-capture-button"
+        onClick={() => setOpen((value) => !value)}
+        aria-label={open ? "Close quick capture" : "Open quick capture"}
+        aria-expanded={open}
+        aria-controls="zenora-quick-capture-menu"
+        aria-haspopup="menu"
+      >
         {open ? <X size={22} /> : <Plus size={24} />}
       </button>
     </div>

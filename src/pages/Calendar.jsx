@@ -46,8 +46,8 @@ export default function Calendar({ tasks, setData, data }) {
         <div className="mb-5 flex items-center justify-between">
           <h2 className="text-xl font-semibold text-white">{cursor.toLocaleString("en", { month: "long", year: "numeric" })}</h2>
           <div className="flex gap-2">
-            <button className="icon-button" onClick={() => setCursor(new Date(cursor.getFullYear(), cursor.getMonth() - 1, 1))}><ChevronLeft size={17} /></button>
-            <button className="icon-button" onClick={() => setCursor(new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1))}><ChevronRight size={17} /></button>
+            <button className="icon-button" onClick={() => setCursor(new Date(cursor.getFullYear(), cursor.getMonth() - 1, 1))} aria-label="Previous month"><ChevronLeft size={17} /></button>
+            <button className="icon-button" onClick={() => setCursor(new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1))} aria-label="Next month"><ChevronRight size={17} /></button>
           </div>
         </div>
         <div className="grid grid-cols-7 gap-2 text-center text-xs text-white/35">{["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => <span key={day}>{day}</span>)}</div>
@@ -57,7 +57,7 @@ export default function Calendar({ tasks, setData, data }) {
             const hasExam = exams.some((exam) => exam.date === iso);
             const count = tasks.filter((task) => task.due === iso).length + events.filter((item) => item.date === iso).length + exams.filter((exam) => exam.date === iso).length;
             return (
-              <button key={index} disabled={!day} onClick={() => setSelected(iso)} className={`calendar-cell ${selected === iso ? "is-selected" : ""} ${hasExam ? "has-exam" : ""}`}>
+              <button key={index} disabled={!day} onClick={() => setSelected(iso)} className={`calendar-cell ${selected === iso ? "is-selected" : ""} ${hasExam ? "has-exam" : ""}`} aria-label={day ? `Select ${iso}${count ? `, ${count} plan${count === 1 ? "" : "s"}` : ""}` : "Empty calendar cell"} aria-pressed={selected === iso}>
                 {day && <><span>{day.getDate()}</span>{count > 0 && <b>{count}</b>}</>}
               </button>
             );

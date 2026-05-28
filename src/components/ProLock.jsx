@@ -3,7 +3,7 @@ import { Crown, Lock } from "lucide-react";
 export default function ProLock({ title, children, onUpgrade, compact = false }) {
   return (
     <div className={`pro-lock ${compact ? "is-compact" : ""}`}>
-      <div className="pro-lock-content">{children}</div>
+      <div className="pro-lock-content" aria-hidden="true">{children}</div>
       <div className="pro-lock-panel">
         <div className="pro-lock-icon"><Lock size={17} /></div>
         <div>

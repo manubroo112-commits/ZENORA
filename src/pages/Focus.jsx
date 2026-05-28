@@ -11,6 +11,7 @@ const presets = {
 };
 
 export default function Focus({ data, setData, setActive }) {
+  const isPro = data.profile.plan === "pro" || data.profile.proOverride;
   const [preset, setPreset] = useState("25/5");
   const [seconds, setSeconds] = useState(presets[preset].focus);
   const [running, setRunning] = useState(false);
@@ -23,6 +24,12 @@ export default function Focus({ data, setData, setActive }) {
   const activePreset = preset === "Custom" ? { focus: custom.focus * 60, break: custom.break * 60 } : presets[preset];
   const total = mode === "Focus" ? activePreset.focus : activePreset.break;
   const focusScore = useMemo(() => Math.min(100, Math.round((data.focusStats.minutes / 300) * 100)), [data.focusStats.minutes]);
+
+  useEffect(() => {
+    if (!isPro && preset !== "25/5") setPreset("25/5");
+    if (!isPro && music) setMusic(false);
+    if (!isPro && fullscreen) setFullscreen(false);
+  }, [fullscreen, isPro, music, preset]);
 
   useEffect(() => {
     setSeconds(mode === "Focus" ? activePreset.focus : activePreset.break);
@@ -56,7 +63,15 @@ export default function Focus({ data, setData, setActive }) {
       <Card className={`focus-timer-card grid place-items-center p-8 text-center ${fullscreen ? "is-fullscreen" : ""}`}>
         <div className="mb-5 flex flex-wrap justify-center gap-2">
           {Object.keys(presets).map((item) => (
-            <button key={item} onClick={() => setPreset(item)} className={`pill ${preset === item ? "bg-white text-black" : ""}`}>{item}</button>
+            <button
+              key={item}
+              disabled={!isPro && item !== "25/5"}
+              onClick={() => setPreset(item)}
+              className={`pill ${preset === item ? "bg-white text-black" : ""}`}
+              title={!isPro && item !== "25/5" ? "Pro timer preset" : item}
+            >
+              {item}{!isPro && item !== "25/5" ? " Pro" : ""}
+            </button>
           ))}
           {["Focus", "Break"].map((item) => (
             <button key={item} onClick={() => setMode(item)} className={`pill ${mode === item ? "bg-white text-black" : ""}`}>{item}</button>
@@ -79,8 +94,8 @@ export default function Focus({ data, setData, setActive }) {
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           <button onClick={() => { setCompleted(false); setRunning(!running); }} className="primary-button">{running ? <Pause size={18} /> : <Play size={18} />}{running ? "Pause" : "Start"}</button>
           <button onClick={() => { setRunning(false); setCompleted(false); setSeconds(total); }} className="ghost-button"><RotateCcw size={18} />Reset</button>
-          <button onClick={() => setMusic(!music)} className={`ghost-button ${music ? "bg-white text-black" : ""}`}><Music size={18} />{music ? "Lofi on" : "Lofi"}</button>
-          <button onClick={() => setFullscreen(!fullscreen)} className="ghost-button"><Maximize2 size={18} />Focus mode</button>
+          <button disabled={!isPro} onClick={() => setMusic(!music)} className={`ghost-button ${music ? "bg-white text-black" : ""}`}><Music size={18} />{music ? "Lofi on" : "Lofi Pro"}</button>
+          <button disabled={!isPro} onClick={() => setFullscreen(!fullscreen)} className="ghost-button"><Maximize2 size={18} />Focus Pro</button>
         </div>
       </Card>
       {!fullscreen && (

@@ -87,6 +87,8 @@ export default function TodayMission({ data, setData, setActive }) {
                 onClick={() => patchMission({ goals: mission.goals.map((item) => item.id === goal.id ? { ...item, done: !item.done } : item) })}
                 className="mission-check"
                 title={goal.done ? "Mark pending" : "Mark done"}
+                aria-label={`${goal.done ? "Mark pending" : "Mark done"}: ${goal.text || "study goal"}`}
+                aria-pressed={goal.done}
               >
                 <CheckCircle2 size={18} />
               </button>
@@ -100,6 +102,7 @@ export default function TodayMission({ data, setData, setActive }) {
                 onClick={() => patchMission({ goals: mission.goals.filter((item) => item.id !== goal.id) })}
                 className="mission-delete"
                 title="Delete goal"
+                aria-label={`Delete goal: ${goal.text || "study goal"}`}
               >
                 <Trash2 size={16} />
               </button>
@@ -133,7 +136,7 @@ export default function TodayMission({ data, setData, setActive }) {
             <input className="field" value={mission.revisionTarget} onChange={(event) => patchMission({ revisionTarget: event.target.value })} placeholder="Example: Revise formulas and last mock mistakes" />
           </div>
         </div>
-        <button onClick={() => patchMission({ revisionDone: !mission.revisionDone })} className={`pill mt-4 ${mission.revisionDone ? "is-complete" : ""}`}>
+        <button onClick={() => patchMission({ revisionDone: !mission.revisionDone })} className={`pill mt-4 ${mission.revisionDone ? "is-complete" : ""}`} aria-pressed={mission.revisionDone}>
           {mission.revisionDone ? "Revision complete" : "Mark revision complete"}
         </button>
       </Card>
@@ -144,7 +147,7 @@ export default function TodayMission({ data, setData, setActive }) {
           <label>Reminder text</label>
           <input className="field" value={mission.mockTest} onChange={(event) => patchMission({ mockTest: event.target.value })} placeholder="Example: Practice test at 7 PM" />
         </div>
-        <button onClick={() => patchMission({ mockDone: !mission.mockDone })} className={`primary-button mt-4 w-full justify-center ${mission.mockDone ? "opacity-80" : ""}`}>
+        <button onClick={() => patchMission({ mockDone: !mission.mockDone })} className={`primary-button mt-4 w-full justify-center ${mission.mockDone ? "opacity-80" : ""}`} aria-pressed={mission.mockDone}>
           <CheckCircle2 size={18} /> {mission.mockDone ? "Test done" : "Mark test done"}
         </button>
       </Card>

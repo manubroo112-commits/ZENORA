@@ -2,8 +2,8 @@ import { Check, Crown, Lock, Sparkles } from "lucide-react";
 import Card from "../components/Card";
 import { hasProAccess } from "../utils/proAccess";
 
-const free = ["Dashboard", "To-do list", "Basic habits", "Mini calendar", "Pomodoro timer", "Notes", "Basic analytics", "Limited subjects", "Countdowns", "Today's Mission", "30 AI assistant messages"];
-const pro = ["Unlimited AI messages", "AI study planner", "AI revision planner", "AI weak-topic suggestions", "Advanced analytics", "Weekly/monthly graphs", "Productivity heatmap", "Unlimited habits, subjects, notes, countdowns", "Premium themes", "Focus Mode Pro", "Custom study modes", "Custom dashboard widgets"];
+const free = ["Dashboard", "To-do list", "Mini calendar", "Pomodoro timer", "Notes", "Basic analytics", "Limited subjects", "Countdowns", "Today's Mission", "30 AI assistant messages"];
+const pro = ["Student tools: CGPA, attendance, grades, timetable, water, goals", "Unlimited AI messages", "AI study planner", "AI revision planner", "AI weak-topic suggestions", "Advanced analytics", "Weekly/monthly graphs", "Productivity heatmap", "Unlimited habits, subjects, notes, countdowns", "Premium themes", "Focus Mode Pro", "Custom dashboard widgets"];
 
 export default function Pricing({ setActive, profile, user }) {
   const isPro = profile?.plan === "pro" || hasProAccess(user?.email);

@@ -4,10 +4,10 @@ import Card from "../components/Card";
 import { seedData } from "../data/seed";
 
 const palettes = [
+  { id: "sage", name: "Sage Cream", note: "Soft cream, sage green, clean light study UI", colors: ["#FAF8F5", "#F2EDE6", "#7FA88E", "#EAF2EC", "#4A7C65"] },
   { id: "mocha", name: "Ink Wash", note: "Black, silver, smoky gray, clean minimal", colors: ["#252525", "#545454", "#7d7d7d", "#cfcfcf", "#545454"] },
   { id: "matcha", name: "Jade Pebble Morning", note: "Muted jade, paper white, calm forest", colors: ["#404e3b", "#6c8480", "#7b9669", "#bac8b1", "#e6e6e6"] },
   { id: "sakura", name: "Blush Graphite", note: "Soft graphite, blush, muted stone blue", colors: ["#837d68", "#8a9db1", "#c1c0c2", "#f5e9e7", "#ecc5c6"] },
-  { id: "ocean", name: "Ocean Lab", note: "Deep teal, cyan glow, clean blue", colors: ["#081218", "#162d36", "#5faec2", "#9ddbd8", "#aeb7f0"] },
   { id: "graphite", name: "Graphite Pro", note: "Neutral dark, platinum, minimal UI", colors: ["#0e1013", "#292c33", "#838b98", "#d7dee8", "#a7b5c8"] }
 ];
 
@@ -15,8 +15,18 @@ const premiumThemes = ["AMOLED", "Cyber Blue", "Neon Purple", "Minimal White", "
 const studyModes = ["General", "School", "College", "University", "Competitive exam", "Language learning", "Certification", "Self-study", "Other"];
 
 export default function Settings({ data, profile, preferences, setData, cloud }) {
+  const isPro = profile.plan === "pro" || profile.proOverride;
+  const visiblePalettes = isPro ? palettes : palettes.filter((palette) => palette.id === "sage");
   const patch = (changes) => setData((data) => ({ ...data, profile: { ...data.profile, ...changes } }));
   const patchPreference = (changes) => setData((data) => ({ ...data, preferences: { ...data.preferences, ...changes } }));
+  const applyPalette = (palette) => {
+    if (!isPro && palette.id !== "sage") return;
+    patch({
+      theme: palette.id,
+      accent: palette.colors[2],
+      dark: palette.id === "sage" ? false : profile.dark
+    });
+  };
   const resetData = () => {
     const confirmed = window.confirm("Reset all local ZENORA data? This cannot be undone.");
     if (confirmed) setData(seedData);
@@ -88,12 +98,14 @@ export default function Settings({ data, profile, preferences, setData, cloud })
       </Card>
       <Card>
         <h2 className="section-title"><Palette size={18} /> Theme</h2>
-        <p className="mt-2 text-sm leading-6 text-white/48">Choose a full app palette. The preview shows background, card, and accent behavior before you switch.</p>
+        <p className="mt-2 text-sm leading-6 text-white/48">
+          Free users stay on the clean Sage Cream theme. Premium unlocks the full theme library.
+        </p>
         <div className="mt-5 grid gap-3 sm:grid-cols-2">
-          {palettes.map((palette) => (
+          {visiblePalettes.map((palette) => (
             <button
               key={palette.id}
-              onClick={() => patch({ theme: palette.id, accent: palette.colors[2] })}
+              onClick={() => applyPalette(palette)}
               className={`palette-card ${profile.theme === palette.id ? "is-active" : ""}`}
             >
               <div className="palette-preview" style={{ background: `radial-gradient(circle at 18% 10%, ${palette.colors[3]}55, transparent 36%), linear-gradient(135deg, ${palette.colors[0]}, ${palette.colors[1]})` }}>
@@ -115,18 +127,28 @@ export default function Settings({ data, profile, preferences, setData, cloud })
             </button>
           ))}
         </div>
-        <div className="mt-6 flex items-center justify-between rounded-2xl bg-white/[.045] p-4">
-          <div><div className="font-medium text-white">Light mode</div><div className="text-xs text-white/40">Keep dark as the default calm surface</div></div>
-          <button onClick={() => patch({ dark: !profile.dark })} className={`toggle ${!profile.dark ? "is-on" : ""}`}><span /></button>
-        </div>
+        {!isPro && (
+          <div className="mt-5 rounded-2xl border border-dashed border-[rgba(74,124,101,.28)] bg-[rgba(234,242,236,.72)] p-4">
+            <div className="flex items-center gap-2 font-semibold text-[var(--color-sage-dark)]"><Crown size={17} /> Premium themes</div>
+            <p className="mt-2 text-xs leading-5 text-[var(--color-secondary)]">Ink Wash, Jade Pebble, Blush Graphite, and Graphite Pro are available after upgrading. Your free workspace stays on Sage Cream for a clean, readable study setup.</p>
+            <button onClick={() => applyPalette(palettes[0])} className="ghost-button mt-3 justify-center">Use Sage Cream</button>
+          </div>
+        )}
+        {isPro && (
+          <div className="mt-6 flex items-center justify-between rounded-2xl bg-white/[.045] p-4">
+            <div><div className="font-medium text-white">Light mode</div><div className="text-xs text-white/40">Theme mode customization is included with Pro.</div></div>
+            <button onClick={() => patch({ dark: !profile.dark })} className={`toggle ${!profile.dark ? "is-on" : ""}`}><span /></button>
+          </div>
+        )}
         <div className="mt-5 rounded-2xl border border-dashed border-white/14 bg-white/[.04] p-4">
           <div className="flex items-center gap-2 font-semibold text-white"><Crown size={17} /> Premium themes</div>
           <div className="mt-3 flex flex-wrap gap-2">
             {premiumThemes.map((theme) => <span key={theme} className="premium-badge">{theme}</span>)}
           </div>
-          <p className="mt-3 text-xs leading-5 text-white/45">Visible now as placeholders. Checkout can unlock these later.</p>
+          <p className="mt-3 text-xs leading-5 text-white/45">{isPro ? "Premium theme access is active on this account." : "Upgrade to Pro to unlock premium visual styles."}</p>
         </div>
       </Card>
+      {isPro && (
       <Card className="xl:col-span-2">
         <h2 className="section-title"><Crown size={18} /> Upgrade and testing</h2>
         <div className="mt-5 grid gap-3 md:grid-cols-2">
@@ -140,6 +162,7 @@ export default function Settings({ data, profile, preferences, setData, cloud })
           </div>
         </div>
       </Card>
+      )}
       <Card className="xl:col-span-2">
         <h2 className="section-title"><Bell size={18} /> Notifications</h2>
         <div className="mt-5 flex items-center justify-between gap-4 rounded-2xl bg-white/[.045] p-4">

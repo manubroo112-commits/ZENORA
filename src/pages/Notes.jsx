@@ -4,9 +4,11 @@ import Card from "../components/Card";
 
 const categories = ["General", "Physics", "Math", "Writing", "Revision"];
 
-export default function Notes({ notes, setData, query }) {
+export default function Notes({ data, notes, setData, query }) {
   const [draft, setDraft] = useState({ title: "", category: "General", body: "" });
   const [category, setCategory] = useState("All");
+  const [limitNotice, setLimitNotice] = useState("");
+  const isPro = data.profile.plan === "pro" || data.profile.proOverride;
   const visible = notes.filter((note) => {
     const text = `${note.title} ${note.body} ${note.category || ""}`.toLowerCase();
     return text.includes(query.toLowerCase()) && (category === "All" || (note.category || "General") === category);
@@ -15,7 +17,12 @@ export default function Notes({ notes, setData, query }) {
   const add = (event) => {
     event.preventDefault();
     if (!draft.title.trim() && !draft.body.trim()) return;
+    if (!isPro && notes.length >= 10) {
+      setLimitNotice("Free plan includes 10 notes. Upgrade to Pro for unlimited notes.");
+      return;
+    }
     setData((data) => ({ ...data, notes: [{ id: crypto.randomUUID(), pinned: false, ...draft }, ...data.notes] }));
+    setLimitNotice("");
     setDraft({ title: "", category: "General", body: "" });
   };
 
@@ -40,6 +47,7 @@ export default function Notes({ notes, setData, query }) {
             <p className="field-help">Simple markdown-style notes are supported visually: headings, bullets, and bold markers.</p>
           </div>
           <button className="primary-button w-full justify-center">Save note</button>
+          {limitNotice && <div className="empty-state">{limitNotice}</div>}
         </form>
       </Card>
       <div>
@@ -55,8 +63,8 @@ export default function Notes({ notes, setData, query }) {
                   <p className="mt-1 text-xs text-white/40">{note.category || "General"}</p>
                 </div>
                 <div className="flex gap-2">
-                  <button title="Pin" className="icon-button" onClick={() => setData((data) => ({ ...data, notes: data.notes.map((item) => item.id === note.id ? { ...item, pinned: !item.pinned } : item) }))}><Pin size={15} /></button>
-                  <button title="Delete" className="icon-button" onClick={() => setData((data) => ({ ...data, notes: data.notes.filter((item) => item.id !== note.id) }))}><Trash2 size={15} /></button>
+                  <button title="Pin" className="icon-button" aria-label={`${note.pinned ? "Unpin" : "Pin"} note: ${note.title || "Untitled"}`} aria-pressed={note.pinned} onClick={() => setData((data) => ({ ...data, notes: data.notes.map((item) => item.id === note.id ? { ...item, pinned: !item.pinned } : item) }))}><Pin size={15} /></button>
+                  <button title="Delete" className="icon-button" aria-label={`Delete note: ${note.title || "Untitled"}`} onClick={() => setData((data) => ({ ...data, notes: data.notes.filter((item) => item.id !== note.id) }))}><Trash2 size={15} /></button>
                 </div>
               </div>
               <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-white/52">{note.body.replaceAll("## ", "").replaceAll("**", "")}</p>
